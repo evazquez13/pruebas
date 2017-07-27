@@ -83,6 +83,7 @@
 			</div>
       <div class="col-md-2 col-sm-12 col-xs-12">
         <ul class="lista-redes">
+          <li><a href="http://localhost:8888/pruebas/es/favoritos/" style="color: #FFF;">Fav</a></li>
           <li><a href="#"><div class="icon-redes-footer facebook"></div></a></li>
           <li><a href="#"><div class="icon-redes-footer twitter"></div></a></li>
           <li><a href="#"><div class="icon-redes-footer youtube"></div></a></li>

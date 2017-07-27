@@ -19,18 +19,23 @@
   <link rel="stylesheet" href="<?php echo bloginfo('template_url'); ?>/css/custom.css">
   <link rel="stylesheet" href="<?php echo bloginfo('template_url'); ?>/css/menu.css">
 </head>
-
-
   <?php wp_head(); ?>
   <?php 
+  global $wpdb;
+  global $post;
   $translations = pll_the_languages( array( 'raw' => url ) );
   $idioma = pll_current_language( 'slug' ); 
 echo '<script languaje="JavaScript">
             
       var varjs="'.$idioma.'";      
 </script>';
+  $slug = get_permalink();
+  $email = 'Test@test.com';
+  $nombre = $post->post_name;
   ?>
-
+<?php $con = contador($slug,$email);
+  echo $con;
+ ?>
 <body>
 <header>
   <div class="fonfoAzul hidden-xs">    
@@ -60,6 +65,17 @@ echo '<script languaje="JavaScript">
     				<li class="lang-item lang-item-5 lang-item-en">
     					<a lang="es-MX" hreflang="es-MX" href="<?php echo $translations['es']['url']; ?>"><h1 class="menuEnEs <?php if ($idioma== 'es') { echo 'activado';} ?>">ES</h1></a>
     				</li>
+            <li class="lang-item">
+              <?php if ($con == 0) {?>
+              <a onclick="agregaFav();">
+              <h1 class="menuEnEs">AgregarFavoritos</h1>
+              </a>
+              <?php }else{ ?>
+              <a onclick="agregaFav();">
+              <h1 class="menuEnEs">EliminarFavoritos</h1>
+              </a>
+              <?php } ?>
+            </li>
 			</ul>
         </div>
         
@@ -417,3 +433,22 @@ if (is_page("Gobierno_Corporativo-en")) { ?>
  </div>
 <?php } ?>
 <?php } ?>
+<script type = "text/javascript">
+function agregaFav() {
+$.ajax( {
+          type: 'POST',
+          data: {
+            page: "<?php echo $post->post_name; ?>",
+            correoUser: "Test@test.com",
+            perma: "<?php echo get_permalink(); ?>"
+          },
+          url: '/pruebas/wp-content/themes/pruebas/addFav.php',
+          success: function(data){
+            console.log(data);
+          },
+          error: function(xhr){
+            console.log("error");
+          }
+        });
+}
+    </script>⁠⁠⁠⁠

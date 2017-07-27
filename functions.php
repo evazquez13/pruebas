@@ -52,6 +52,7 @@ if ( ! function_exists( 'twentyfifteen_setup' ) ) :
  *
  * @since Twenty Fifteen 1.0
  */
+createtable();
 function twentyfifteen_setup() {
 
 	/*
@@ -410,4 +411,34 @@ require get_template_directory() . '/inc/customizer.php';
 add_action('get_header', 'remove_admin_login_header');
 function remove_admin_login_header() {
 	remove_action('wp_head', '_admin_bar_bump_cb');
+}
+
+function createtable(){
+
+	global $wpdb;
+	
+	$sql = "CREATE TABLE IF NOT EXISTS _favoritos
+(
+ id INT(11) AUTO_INCREMENT NOT NULL,
+ user_correo VARCHAR(200),
+ user_slug VARCHAR(200),
+ permalink VARCHAR(200),
+ PRIMARY KEY (id)
+)ENGINE = InnoDB;";
+				
+	$wpdb->query($sql);
+
+}
+function contador($perma, $correo){
+	global $wpdb;
+	
+  	echo "<script>console.log( 'permalink " . $perma . "' );</script>";
+  	echo "<script>console.log( 'correo " . $correo . "' );</script>";
+
+	echo "<script>console.log( 'Si llega al contador ' );</script>";
+	$sql2 = "select count(*) from _favoritos where permalink = '$perma' and user_correo='$correo';";
+	
+   $count= $wpdb->get_var($sql2);
+
+   return $count;
 }
