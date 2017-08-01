@@ -429,16 +429,3 @@ function createtable(){
 	$wpdb->query($sql);
 
 }
-function contador($perma, $correo){
-	global $wpdb;
-	
-  	echo "<script>console.log( 'permalink " . $perma . "' );</script>";
-  	echo "<script>console.log( 'correo " . $correo . "' );</script>";
-
-	echo "<script>console.log( 'Si llega al contador ' );</script>";
-	$sql2 = "select count(*) from _favoritos where permalink = '$perma' and user_correo='$correo';";
-	
-   $count= $wpdb->get_var($sql2);
-
-   return $count;
-}

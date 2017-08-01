@@ -15,6 +15,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">  
   <link rel="shortcut icon" href="http://ec2-52-213-166-151.eu-west-1.compute.amazonaws.com/wp-content/uploads/2017/03/favicon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="<?php echo bloginfo('template_url'); ?>/css/bootstrap.css">
   <link rel="stylesheet" href="<?php echo bloginfo('template_url'); ?>/css/custom.css">
   <link rel="stylesheet" href="<?php echo bloginfo('template_url'); ?>/css/menu.css">
@@ -33,10 +34,7 @@ echo '<script languaje="JavaScript">
   $email = 'Test@test.com';
   $nombre = $post->post_name;
   ?>
-<?php $con = contador($slug,$email);
-  echo $con;
- ?>
-<body>
+<body onload="validar()">
 <header>
   <div class="fonfoAzul hidden-xs">    
     <div class="container cabecera">
@@ -65,16 +63,10 @@ echo '<script languaje="JavaScript">
     				<li class="lang-item lang-item-5 lang-item-en">
     					<a lang="es-MX" hreflang="es-MX" href="<?php echo $translations['es']['url']; ?>"><h1 class="menuEnEs <?php if ($idioma== 'es') { echo 'activado';} ?>">ES</h1></a>
     				</li>
-            <li class="lang-item">
-              <?php if ($con == 0) {?>
-              <a onclick="agregaFav();">
-              <h1 class="menuEnEs">AgregarFavoritos</h1>
-              </a>
-              <?php }else{ ?>
-              <a onclick="agregaFav();">
-              <h1 class="menuEnEs">EliminarFavoritos</h1>
-              </a>
-              <?php } ?>
+            <li>
+            <a onclick="agregaFav();">
+            <i id="fav" style="color: red;"></i>
+            </a>
             </li>
 			</ul>
         </div>
@@ -445,10 +437,42 @@ $.ajax( {
           url: '/pruebas/wp-content/themes/pruebas/addFav.php',
           success: function(data){
             console.log(data);
+            var x = document.getElementById('fav');
+
+              if (data == 0) {
+                  x.className = "fa fa-heart";
+              } else {
+                   x.className = "fa fa-file";
+              }
           },
           error: function(xhr){
             console.log("error");
           }
         });
 }
-    </script>⁠⁠⁠⁠
+function validar(){
+    $.ajax( {
+          type: 'POST',
+          data: {
+            correoUser: "Test@test.com",
+            perma: "<?php echo get_permalink(); ?>"
+          },
+          url: '/pruebas/wp-content/themes/pruebas/valid.php',
+          success: function(data){
+            var x = document.getElementById('fav');
+
+              if (data == 0) {
+                  x.className = "fa fa-heart";
+              }else{
+                   x.className = "fa fa-file";
+              }
+          },
+          error: function(xhr){
+            console.log("error");
+          }
+        });
+  }
+
+
+</script>⁠⁠⁠⁠
+    
