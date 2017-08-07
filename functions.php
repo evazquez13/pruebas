@@ -30,6 +30,7 @@
  *
  * @since Twenty Fifteen 1.0
  */
+@ini_set( 'max_execution_time', '300' );
 
 if ( ! isset( $content_width ) ) {
 	$content_width = 660;
