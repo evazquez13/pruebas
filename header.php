@@ -34,7 +34,7 @@ echo '<script languaje="JavaScript">
   $email = 'Test@test.com';
   $nombre = $post->post_name;
   ?>
-<body onload="validar()">
+<body>
 <header>
   <div class="fonfoAzul hidden-xs">    
     <div class="container cabecera">
@@ -475,4 +475,3 @@ function validar(){
 
 
 </script>⁠⁠⁠⁠
-    

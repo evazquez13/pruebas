@@ -430,3 +430,20 @@ function createtable(){
 	$wpdb->query($sql);
 
 }
+function region(){
+
+  $conexion=mysql_connect("localhost","root","root")or die ("no se pudo coectar con la base de datos");
+  mysql_select_db("bbva",$conexion) or die("No se encuentra la base de datos solicitada");
+  $select= "SELECT * FROM tsrh_regiones;";
+  $res = mysql_query($select,$conexion);
+  return $res;
+}
+function promo(){
+
+  $conexion=mysql_connect("localhost","root","root")or die ("no se pudo coectar con la base de datos");
+  mysql_select_db("bbva",$conexion) or die("No se encuentra la base de datos solicitada");
+  $select= "SELECT * FROM tsrh_catpromos;";
+  $res = mysql_query($select,$conexion);
+  return $res;
+    
+}
