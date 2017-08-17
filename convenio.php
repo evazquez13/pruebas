@@ -7,14 +7,13 @@
   $region=$post->region;
   $categoria=$post->categoria;
   $keyword=$post->keyword;
-  $reg=$post->nomRe;
-  $cat=$post->nomCa;
+  
 
 if($keyword==""){//sin palabra clave
 
-$conexion=mysqli_connect("localhost","root","root")or die ("no se pudo conectar con la base de datos");
-  mysqli_select_db($conexion,"bbva") or die("No se encuentra la base de datos solicitada2");
-        mysqli_set_charset($con, 'utf8');
+$conexion=mysqli_connect("173.194.254.4","admin","admin")or die ("no se pudo conectar con la base de datos");
+  mysqli_select_db($conexion,"suiterrhhdb") or die("No se encuentra la base de datos solicitada2");
+  mysqli_set_charset($connexion, 'utf8');
 
   $select= "SELECT id_categoria,nb_empresa,tx_descripcion,tx_porcentaje,id_region,tx_estado,tx_url, X(tx_gps) as latitude, Y(tx_gps) as longitud FROM tsrh_convenio WHERE id_region='$region' and id_categoria='$categoria' group by nb_empresa;";
   $res = mysqli_query($conexion,$select);
@@ -85,9 +84,9 @@ if (mysqli_num_rows($res) == 0) { // regreso sin valores
 
 }
 }else{ //campo palabra clave
-$conexion=mysqli_connect("localhost","root","root")or die ("no se pudo conectar con la base de datos");
-  mysqli_select_db($conexion,"bbva") or die("No se encuentra la base de datos solicitada2");
-        mysqli_set_charset($con, 'utf8');
+$conexion=mysqli_connect("173.194.254.4","admin","admin")or die ("no se pudo conectar con la base de datos");
+  mysqli_select_db($conexion,"suiterrhhdb") or die("No se encuentra la base de datos solicitada2");
+  mysqli_set_charset($connexion, 'utf8');
 
   $select= "SELECT id_categoria,nb_empresa,tx_descripcion,tx_porcentaje,id_region,tx_estado,tx_url, X(tx_gps) as latitude, Y(tx_gps) as longitud FROM tsrh_convenio WHERE id_region='$region' and id_categoria='$categoria' and nb_empresa like '%$keyword%' or tx_descripcion like '%$keyword%' group by nb_empresa;";
   $res = mysqli_query($conexion,$select);

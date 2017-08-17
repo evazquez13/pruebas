@@ -430,20 +430,51 @@ function createtable(){
 	$wpdb->query($sql);
 
 }
+function dboCon(){
+ $host="173.194.254.4";
+ $user="admin";
+ $pass="admin";
+ $dbo="suiterrhhdb";
+
+ $conexion=mysqli_connect($host,$user,$pass)or die ("no se pudo conectar con la base de datos");
+  mysqli_select_db($conexion,$dbo) or die("No se encuentra la base de datos solicitada1");
+  mysqli_set_charset($conexion, 'utf8');
+
+ return $conexion;
+
+}
 function region(){
 
-  $conexion=mysql_connect("localhost","root","root")or die ("no se pudo coectar con la base de datos");
-  mysql_select_db("bbva",$conexion) or die("No se encuentra la base de datos solicitada");
+  $conexion=dboCon();
   $select= "SELECT * FROM tsrh_regiones;";
-  $res = mysql_query($select,$conexion);
+  $res = mysqli_query($conexion,$select);
+  mysqli_close($conexion);
   return $res;
 }
 function promo(){
 
-  $conexion=mysql_connect("localhost","root","root")or die ("no se pudo coectar con la base de datos");
-  mysql_select_db("bbva",$conexion) or die("No se encuentra la base de datos solicitada");
+  $conexion=dboCon();
   $select= "SELECT * FROM tsrh_catpromos;";
-  $res = mysql_query($select,$conexion);
+  $res = mysqli_query($conexion,$select);
+  mysqli_close($conexion);
   return $res;
     
+}
+
+function especialidad(){
+	
+	$conexion=dboCon();
+  	$select= "SELECT * FROM tsrh_catespecialidad;";
+  	$res = mysqli_query($conexion,$select);
+  	mysqli_close($conexion);
+  	return $res;
+}
+
+function directorioMedico(){
+	$conexion=dboCon();
+	$select= "SELECT  d.id_dirmedico, d.nb_nombre,d.tx_callenumero,d.tx_colonia,d.tx_cp,d.tx_ciudadmunicipio,d.tx_estado,d.tx_direccion_formateada,d.st_visible,d.fh_creamod, X(d.tx_gps) as latitude, Y(d.tx_gps) as longitude, e.tx_descripcion 
+				from tsrh_dirmedico as d join tsrh_catespecialidad as e on e.id_catespecialidad = d.tsrh_catespecialidad_id_catespecialidad limit 0,10";
+	$res = mysqli_query($conexion,$select);
+	mysqli_close($conexion);
+	return $res;
 }

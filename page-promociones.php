@@ -38,7 +38,7 @@ get_header(); ?>
               <div class="col-md-4">
                 <select name="reg" id="regionID" onchange="go(this.form)" class="input-promos form-control" ng-init="regionID = options[0]">
                   <option value="" selected="selected"> Seleccionar una Región</option>
-                   <?php while ($reg=mysql_fetch_array($co)){
+                   <?php while ($reg=mysqli_fetch_array($co)){
                     echo "<option value=".$reg['id_region'].">".$reg['nb_region']."</option>";
                     }
                   ?>
@@ -48,7 +48,7 @@ get_header(); ?>
               <div class="col-md-4">  
                   <select name="cat" id="idCategoria" ng-model="catID" onchange="go(this.form)" class="input-promos form-control" ng-init="catID = options[0]">
                     <option value="" selected="selected"> Seleccionar una Categoría</option>
-                    <?php while ($cat=mysql_fetch_array($co1)){
+                    <?php while ($cat=mysqli_fetch_array($co1)){
                       echo "<option value=".$cat['id_categoria'].">".$cat['nb_categoria']."</option>";
                       }
                   ?>
