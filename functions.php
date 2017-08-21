@@ -431,6 +431,12 @@ function createtable(){
 
 }
 function dboCon(){
+
+ // $host="localhost";
+ // $user="root";
+ // $pass="root";
+ // $dbo="bbva";
+
  $host="173.194.254.4";
  $user="admin";
  $pass="admin";
@@ -470,10 +476,9 @@ function especialidad(){
   	return $res;
 }
 
-function directorioMedico(){
+function directorioMedico($email){
 	$conexion=dboCon();
-	$select= "SELECT  d.id_dirmedico, d.nb_nombre,d.tx_callenumero,d.tx_colonia,d.tx_cp,d.tx_ciudadmunicipio,d.tx_estado,d.tx_direccion_formateada,d.st_visible,d.fh_creamod, X(d.tx_gps) as latitude, Y(d.tx_gps) as longitude, e.tx_descripcion 
-				from tsrh_dirmedico as d join tsrh_catespecialidad as e on e.id_catespecialidad = d.tsrh_catespecialidad_id_catespecialidad limit 0,10";
+	$select= "SELECT  esp.tx_descripcion, dir.nb_nombre,dir.tx_callenumero,dir.tx_colonia,dir.tx_estado, X(dir.tx_gps) as latitude, Y(dir.tx_gps) as longitude, esp.tx_descripcion, user.id_region from tsrh_dirmedico dir, tsrh_catespecialidad esp, tsrh_catservicios serv, tsrh_usuario user where dir.tsrh_catespecialidad_id_catespecialidad=esp.id_catespecialidad and dir.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tx_correo='$email' limit 0,40";
 	$res = mysqli_query($conexion,$select);
 	mysqli_close($conexion);
 	return $res;

@@ -9,13 +9,14 @@
   $keyword=$post->keyword;
   
 
-if($keyword==""){//sin palabra clave
+if($keyword!=""){//sin palabra clave
 
 $conexion=mysqli_connect("173.194.254.4","admin","admin")or die ("no se pudo conectar con la base de datos");
   mysqli_select_db($conexion,"suiterrhhdb") or die("No se encuentra la base de datos solicitada2");
   mysqli_set_charset($connexion, 'utf8');
 
-  $select= "SELECT id_categoria,nb_empresa,tx_descripcion,tx_porcentaje,id_region,tx_estado,tx_url, X(tx_gps) as latitude, Y(tx_gps) as longitud FROM tsrh_convenio WHERE id_region='$region' and id_categoria='$categoria' group by nb_empresa;";
+  $select= "SELECT c.id_categoria,c.nb_empresa,c.tx_descripcion,c.tx_porcentaje,c.id_region,c.tx_estado,c.tx_url, X(c.tx_gps) as latitude, Y(c.tx_gps) as longitud, r.nb_region as region, p.nb_categoria as categoria FROM tsrh_convenio c, tsrh_regiones r,tsrh_catpromos p WHERE c.id_region=r.id_region and c.id_categoria=p.id_categoria and c.id_region='r1' and ((c.nb_empresa like '%".$keyword."%') or (c.tx_descripcion like '%".$keyword."%')) group by c.nb_empresa;";
+  echo $select;
   $res = mysqli_query($conexion,$select);
 
 if (mysqli_num_rows($res) == 0) { // regreso sin valores

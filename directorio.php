@@ -5,16 +5,20 @@ $estado = $post->estado;
 $municipio = $post->municipio;
 $especialidad = $post->especialidad;
 $prov = $post->proveedor;
+$correoUser =$post->correoUser;
 
 $proveedor=str_replace(' ','%',$prov);
 
+$conexion=mysqli_connect("173.194.254.4","admin","admin")or die ("no se pudo conectar con la base de datos");
+mysqli_select_db($conexion,"suiterrhhdb") or die("No se encuentra la base de datos solicitada2");
+mysqli_set_charset($conexion, 'utf8');
+
+// $conexion=mysqli_connect("localhost","root","root")or die ("no se pudo conectar con la base de datos");
+// mysqli_select_db($conexion,"bbva") or die("No se encuentra la base de datos solicitada2");
+// mysqli_set_charset($conexion, 'utf8');
 
 if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!="Remover Filtro" && $proveedor!="") {
-	$conexion=mysqli_connect("173.194.254.4","admin","admin")or die ("no se pudo conectar con la base de datos");
-	mysqli_select_db($conexion,"suiterrhhdb") or die("No se encuentra la base de datos solicitada2");
-	mysqli_set_charset($conexion, 'utf8');
-	$select= "SELECT  d.id_dirmedico,e.tx_descripcion, d.nb_nombre,d.tx_callenumero,d.tx_colonia,d.tx_cp,d.tx_ciudadmunicipio,d.tx_estado,d.tx_direccion_formateada,d.st_visible,d.fh_creamod, X(d.tx_gps) as latitude, Y(d.tx_gps) as longitude, e.tx_descripcion 
-				from tsrh_dirmedico as d join tsrh_catespecialidad as e on e.id_catespecialidad = d.tsrh_catespecialidad_id_catespecialidad where d.tx_estado = '$estado' and d.tx_ciudadmunicipio = '$municipio' and e.tx_descripcion = '$especialidad' and (( d.nb_nombre like '%".$proveedor."%') or ( e.tx_descripcion like '%".$proveedor."%'))  limit 0,30";	
+	$select= "SELECT esp.tx_descripcion, dir.nb_nombre,dir.tx_callenumero,dir.tx_colonia,dir.tx_estado, X(dir.tx_gps) as latitude, Y(dir.tx_gps) as longitude, esp.tx_descripcion, user.id_region from tsrh_dirmedico dir, tsrh_catespecialidad esp, tsrh_catservicios serv, tsrh_usuario user where dir.tsrh_catespecialidad_id_catespecialidad=esp.id_catespecialidad and dir.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tx_correo='$correoUser' and dir.tx_estado = '$estado' and dir.tx_ciudadmunicipio = '$municipio' and esp.tx_descripcion = '$especialidad' and (( dir.nb_nombre like '%".$proveedor."%') or ( esp.tx_descripcion like '%".$proveedor."%'))  limit 0,40";	
 	$res = mysqli_query($conexion,$select);
 	mysqli_close($conexion);
 
@@ -40,7 +44,7 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 	    		}
 
 	            echo ''.$row.'<div class="col-md-6">
-						<div class="col-md-12" style="border: 4px solid #CCC;height: 253px;margin-bottom: 10px;padding: 25px;">
+						<div class="col-md-12" style="border: 4px solid #CCC;height: 260px;margin-bottom: 10px;padding: 25px;">
 							<table class="table borderless table-striped">
 								<tbody><tr>
 									<td class="col-md-1"><strong>Nombre</strong></td>
@@ -71,11 +75,7 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 
 	    }
 }elseif ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!="Remover Filtro" && $proveedor=="") {
-	$conexion=mysqli_connect("173.194.254.4","admin","admin")or die ("no se pudo conectar con la base de datos");
-	mysqli_select_db($conexion,"suiterrhhdb") or die("No se encuentra la base de datos solicitada2");
-	mysqli_set_charset($conexion, 'utf8');
-	$select= "SELECT  d.id_dirmedico, d.nb_nombre,d.tx_callenumero,d.tx_colonia,d.tx_cp,d.tx_ciudadmunicipio,d.tx_estado,d.tx_direccion_formateada,d.st_visible,d.fh_creamod, X(d.tx_gps) as latitude, Y(d.tx_gps) as longitude, e.tx_descripcion 
-				from tsrh_dirmedico as d join tsrh_catespecialidad as e on e.id_catespecialidad = d.tsrh_catespecialidad_id_catespecialidad where d.tx_estado = '$estado' and d.tx_ciudadmunicipio = '$municipio' and e.tx_descripcion = '$especialidad' limit 0,30";
+	$select= "SELECT esp.tx_descripcion, dir.nb_nombre,dir.tx_callenumero,dir.tx_colonia,dir.tx_estado, X(dir.tx_gps) as latitude, Y(dir.tx_gps) as longitude, esp.tx_descripcion, user.id_region from tsrh_dirmedico dir, tsrh_catespecialidad esp, tsrh_catservicios serv, tsrh_usuario user where dir.tsrh_catespecialidad_id_catespecialidad=esp.id_catespecialidad and dir.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tx_correo='$correoUser' and dir.tx_estado = '$estado' and dir.tx_ciudadmunicipio = '$municipio' and esp.tx_descripcion = '$especialidad' limit 0,40";
 	$res = mysqli_query($conexion,$select);
 	mysqli_close($conexion);
 
@@ -101,7 +101,7 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 	    		}
 
 	            echo ''.$row.'<div class="col-md-6">
-						<div class="col-md-12" style="border: 4px solid #CCC;height: 253px;margin-bottom: 10px;padding: 25px;">
+						<div class="col-md-12" style="border: 4px solid #CCC;height: 260px;margin-bottom: 10px;padding: 25px;">
 							<table class="table borderless table-striped">
 								<tbody><tr>
 									<td class="col-md-1"><strong>Nombre</strong></td>
@@ -132,11 +132,7 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 
 	    }
 }elseif ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad=="Remover Filtro" && $proveedor!="") {
-	$conexion=mysqli_connect("173.194.254.4","admin","admin")or die ("no se pudo conectar con la base de datos");
-	mysqli_select_db($conexion,"suiterrhhdb") or die("No se encuentra la base de datos solicitada2");
-	mysqli_set_charset($conexion, 'utf8');
-	$select= "SELECT  d.id_dirmedico,e.tx_descripcion, d.nb_nombre,d.tx_callenumero,d.tx_colonia,d.tx_cp,d.tx_ciudadmunicipio,d.tx_estado,d.tx_direccion_formateada,d.st_visible,d.fh_creamod, X(d.tx_gps) as latitude, Y(d.tx_gps) as longitude, e.tx_descripcion 
-				from tsrh_dirmedico as d join tsrh_catespecialidad as e on e.id_catespecialidad = d.tsrh_catespecialidad_id_catespecialidad where d.tx_estado = '$estado' and d.tx_ciudadmunicipio = '$municipio' and (( d.nb_nombre like '%".$proveedor."%') or ( e.tx_descripcion like '%".$proveedor."%')) limit 0,30";
+	$select= "SELECT esp.tx_descripcion, dir.nb_nombre,dir.tx_callenumero,dir.tx_colonia,dir.tx_estado, X(dir.tx_gps) as latitude, Y(dir.tx_gps) as longitude, esp.tx_descripcion, user.id_region from tsrh_dirmedico dir, tsrh_catespecialidad esp, tsrh_catservicios serv, tsrh_usuario user where dir.tsrh_catespecialidad_id_catespecialidad=esp.id_catespecialidad and dir.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tx_correo='$correoUser' and dir.tx_estado = '$estado' and dir.tx_ciudadmunicipio = '$municipio' and (( dir.nb_nombre like '%".$proveedor."%') or ( esp.tx_descripcion like '%".$proveedor."%')) limit 0,40";
 	$res = mysqli_query($conexion,$select);
 	mysqli_close($conexion);
 
@@ -162,7 +158,7 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 	    		}
 
 	            echo ''.$row.'<div class="col-md-6">
-						<div class="col-md-12" style="border: 4px solid #CCC;height: 253px;margin-bottom: 10px;padding: 25px;">
+						<div class="col-md-12" style="border: 4px solid #CCC;height: 260px;margin-bottom: 10px;padding: 25px;">
 							<table class="table borderless table-striped">
 								<tbody><tr>
 									<td class="col-md-1"><strong>Nombre</strong></td>
@@ -193,11 +189,7 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 
 	    }
 }elseif ($estado=="Remover Filtro" && $municipio=="Remover Filtro" && $especialidad=="Remover Filtro" && $proveedor!="") {
-	$conexion=mysqli_connect("173.194.254.4","admin","admin")or die ("no se pudo conectar con la base de datos");
-	mysqli_select_db($conexion,"suiterrhhdb") or die("No se encuentra la base de datos solicitada2");
-	mysqli_set_charset($conexion, 'utf8');
-	$select= "SELECT  d.id_dirmedico,e.tx_descripcion, d.nb_nombre,d.tx_callenumero,d.tx_colonia,d.tx_cp,d.tx_ciudadmunicipio,d.tx_estado,d.tx_direccion_formateada,d.st_visible,d.fh_creamod, X(d.tx_gps) as latitude, Y(d.tx_gps) as longitude, e.tx_descripcion 
-				from tsrh_dirmedico as d join tsrh_catespecialidad as e on e.id_catespecialidad = d.tsrh_catespecialidad_id_catespecialidad where  (d.nb_nombre like '%".$proveedor."%') or  (e.tx_descripcion like '%".$proveedor."%') limit 0,30";
+	$select= "SELECT esp.tx_descripcion, dir.nb_nombre,dir.tx_callenumero,dir.tx_colonia,dir.tx_estado, X(dir.tx_gps) as latitude, Y(dir.tx_gps) as longitude, esp.tx_descripcion, user.id_region from tsrh_dirmedico dir, tsrh_catespecialidad esp, tsrh_catservicios serv, tsrh_usuario user where dir.tsrh_catespecialidad_id_catespecialidad=esp.id_catespecialidad and dir.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tx_correo='$correoUser' and ((dir.nb_nombre like '%".$proveedor."%') or (esp.tx_descripcion like '%".$proveedor."%')) limit 0,40";
 	$res = mysqli_query($conexion,$select);
 	mysqli_close($conexion);
 
@@ -223,7 +215,7 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 	    		}
 
 	            echo ''.$row.'<div class="col-md-6">
-						<div class="col-md-12" style="border: 4px solid #CCC;height: 253px;margin-bottom: 10px;padding: 25px;">
+						<div class="col-md-12" style="border: 4px solid #CCC;height: 260px;margin-bottom: 10px;padding: 25px;">
 							<table class="table borderless table-striped">
 								<tbody><tr>
 									<td class="col-md-1"><strong>Nombre</strong></td>
@@ -254,11 +246,7 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 
 	    }
 }elseif ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad=="Remover Filtro" && $proveedor=="") {
-	$conexion=mysqli_connect("173.194.254.4","admin","admin")or die ("no se pudo conectar con la base de datos");
-	mysqli_select_db($conexion,"suiterrhhdb") or die("No se encuentra la base de datos solicitada2");
-	mysqli_set_charset($conexion, 'utf8');
-	$select= "SELECT  d.id_dirmedico, d.nb_nombre,d.tx_callenumero,d.tx_colonia,d.tx_cp,d.tx_ciudadmunicipio,d.tx_estado,d.tx_direccion_formateada,d.st_visible,d.fh_creamod, X(d.tx_gps) as latitude, Y(d.tx_gps) as longitude, e.tx_descripcion 
-				from tsrh_dirmedico as d join tsrh_catespecialidad as e on e.id_catespecialidad = d.tsrh_catespecialidad_id_catespecialidad where d.tx_estado = '$estado' and d.tx_ciudadmunicipio = '$municipio'  limit 0,30";
+	$select= "SELECT esp.tx_descripcion, dir.nb_nombre,dir.tx_callenumero,dir.tx_colonia,dir.tx_estado, X(dir.tx_gps) as latitude, Y(dir.tx_gps) as longitude, esp.tx_descripcion, user.id_region from tsrh_dirmedico dir, tsrh_catespecialidad esp, tsrh_catservicios serv, tsrh_usuario user where dir.tsrh_catespecialidad_id_catespecialidad=esp.id_catespecialidad and dir.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tx_correo='$correoUser' and dir.tx_estado = '$estado' and dir.tx_ciudadmunicipio = '$municipio'  limit 0,40";
 	$res = mysqli_query($conexion,$select);
 	mysqli_close($conexion);
 
@@ -283,7 +271,7 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 	    		}
 
 	            echo ''.$row.'<div class="col-md-6">
-						<div class="col-md-12" style="border: 4px solid #CCC;height: 253px;margin-bottom: 10px;padding: 25px;">
+						<div class="col-md-12" style="border: 4px solid #CCC;height: 260px;margin-bottom: 10px;padding: 25px;">
 							<table class="table borderless table-striped">
 								<tbody><tr>
 									<td class="col-md-1"><strong>Nombre</strong></td>
@@ -314,11 +302,7 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 
 	    }
 }elseif ($estado!="Remover Filtro" && $municipio=="Remover Filtro" && $especialidad=="Remover Filtro" && $proveedor=="") {
-	$conexion=mysqli_connect("173.194.254.4","admin","admin")or die ("no se pudo conectar con la base de datos");
-	mysqli_select_db($conexion,"suiterrhhdb") or die("No se encuentra la base de datos solicitada2");
-	mysqli_set_charset($conexion, 'utf8');
-	$select= "SELECT  d.id_dirmedico, d.nb_nombre,d.tx_callenumero,d.tx_colonia,d.tx_cp,d.tx_ciudadmunicipio,d.tx_estado,d.tx_direccion_formateada,d.st_visible,d.fh_creamod, X(d.tx_gps) as latitude, Y(d.tx_gps) as longitude, e.tx_descripcion 
-				from tsrh_dirmedico as d join tsrh_catespecialidad as e on e.id_catespecialidad = d.tsrh_catespecialidad_id_catespecialidad where d.tx_estado = '$estado'  limit 0,30";
+	$select= "SELECT esp.tx_descripcion, dir.nb_nombre,dir.tx_callenumero,dir.tx_colonia,dir.tx_estado, X(dir.tx_gps) as latitude, Y(dir.tx_gps) as longitude, esp.tx_descripcion, user.id_region from tsrh_dirmedico dir, tsrh_catespecialidad esp, tsrh_catservicios serv, tsrh_usuario user where dir.tsrh_catespecialidad_id_catespecialidad=esp.id_catespecialidad and dir.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tx_correo='$correoUser' and dir.tx_estado = '$estado'  limit 0,40";
 	$res = mysqli_query($conexion,$select);
 	mysqli_close($conexion);
 
@@ -343,7 +327,7 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 	    		}
 
 	            echo ''.$row.'<div class="col-md-6">
-						<div class="col-md-12" style="border: 4px solid #CCC;height: 253px;margin-bottom: 10px;padding: 25px;">
+						<div class="col-md-12" style="border: 4px solid #CCC;height: 260px;margin-bottom: 10px;padding: 25px;">
 							<table class="table borderless table-striped">
 								<tbody><tr>
 									<td class="col-md-1"><strong>Nombre</strong></td>
@@ -374,11 +358,7 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 
 	    }
 }elseif ($estado!="Remover Filtro" && $municipio=="Remover Filtro" && $especialidad!="Remover Filtro" && $proveedor=="") {
-	$conexion=mysqli_connect("173.194.254.4","admin","admin")or die ("no se pudo conectar con la base de datos");
-	mysqli_select_db($conexion,"suiterrhhdb") or die("No se encuentra la base de datos solicitada2");
-	mysqli_set_charset($conexion, 'utf8');
-	$select= "SELECT  d.id_dirmedico, d.nb_nombre,d.tx_callenumero,d.tx_colonia,d.tx_cp,d.tx_ciudadmunicipio,d.tx_estado,d.tx_direccion_formateada,d.st_visible,d.fh_creamod, X(d.tx_gps) as latitude, Y(d.tx_gps) as longitude, e.tx_descripcion 
-				from tsrh_dirmedico as d join tsrh_catespecialidad as e on e.id_catespecialidad = d.tsrh_catespecialidad_id_catespecialidad where d.tx_estado = '$estado' and e.tx_descripcion = '$especialidad' limit 0,30";
+	$select= "SELECT esp.tx_descripcion, dir.nb_nombre,dir.tx_callenumero,dir.tx_colonia,dir.tx_estado, X(dir.tx_gps) as latitude, Y(dir.tx_gps) as longitude, esp.tx_descripcion, user.id_region from tsrh_dirmedico dir, tsrh_catespecialidad esp, tsrh_catservicios serv, tsrh_usuario user where dir.tsrh_catespecialidad_id_catespecialidad=esp.id_catespecialidad and dir.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tx_correo='$correoUser' and dir.tx_estado = '$estado' and esp.tx_descripcion = '$especialidad' limit 0,40";
 	$res = mysqli_query($conexion,$select);
 	mysqli_close($conexion);
 
@@ -403,7 +383,7 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 	    		}
 
 	            echo ''.$row.'<div class="col-md-6">
-						<div class="col-md-12" style="border: 4px solid #CCC;height: 253px;margin-bottom: 10px;padding: 25px;">
+						<div class="col-md-12" style="border: 4px solid #CCC;height: 260px;margin-bottom: 10px;padding: 25px;">
 							<table class="table borderless table-striped">
 								<tbody><tr>
 									<td class="col-md-1"><strong>Nombre</strong></td>
@@ -434,11 +414,7 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 
 	    }
 }elseif ($estado!="Remover Filtro" && $municipio=="Remover Filtro" && $especialidad=="Remover Filtro" && $proveedor!="") {
-	$conexion=mysqli_connect("173.194.254.4","admin","admin")or die ("no se pudo conectar con la base de datos");
-	mysqli_select_db($conexion,"suiterrhhdb") or die("No se encuentra la base de datos solicitada2");
-	mysqli_set_charset($conexion, 'utf8');
-	$select= "SELECT  d.id_dirmedico, d.nb_nombre,d.tx_callenumero,d.tx_colonia,d.tx_cp,d.tx_ciudadmunicipio,d.tx_estado,d.tx_direccion_formateada,d.st_visible,d.fh_creamod, X(d.tx_gps) as latitude, Y(d.tx_gps) as longitude, e.tx_descripcion 
-				from tsrh_dirmedico as d join tsrh_catespecialidad as e on e.id_catespecialidad = d.tsrh_catespecialidad_id_catespecialidad where d.tx_estado = '$estado' and (( d.nb_nombre like '%".$proveedor."%') or ( e.tx_descripcion like '%".$proveedor."%')) limit 0,30";
+	$select= "SELECT esp.tx_descripcion, dir.nb_nombre,dir.tx_callenumero,dir.tx_colonia,dir.tx_estado, X(dir.tx_gps) as latitude, Y(dir.tx_gps) as longitude, esp.tx_descripcion, user.id_region from tsrh_dirmedico dir, tsrh_catespecialidad esp, tsrh_catservicios serv, tsrh_usuario user where dir.tsrh_catespecialidad_id_catespecialidad=esp.id_catespecialidad and dir.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tx_correo='$correoUser' and dir.tx_estado = '$estado' and (( dir.nb_nombre like '%".$proveedor."%') or ( esp.tx_descripcion like '%".$proveedor."%')) limit 0,40";
 	$res = mysqli_query($conexion,$select);
 	mysqli_close($conexion);
 
@@ -463,7 +439,7 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 	    		}
 
 	            echo ''.$row.'<div class="col-md-6">
-						<div class="col-md-12" style="border: 4px solid #CCC;height: 253px;margin-bottom: 10px;padding: 25px;">
+						<div class="col-md-12" style="border: 4px solid #CCC;height: 260px;margin-bottom: 10px;padding: 25px;">
 							<table class="table borderless table-striped">
 								<tbody><tr>
 									<td class="col-md-1"><strong>Nombre</strong></td>
@@ -494,11 +470,7 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 
 	    }
 }elseif ($estado=="Remover Filtro" && $municipio=="Remover Filtro" && $especialidad!="Remover Filtro" && $proveedor!="") {
-	$conexion=mysqli_connect("173.194.254.4","admin","admin")or die ("no se pudo conectar con la base de datos");
-	mysqli_select_db($conexion,"suiterrhhdb") or die("No se encuentra la base de datos solicitada2");
-	mysqli_set_charset($conexion, 'utf8');
-	$select= "SELECT  d.id_dirmedico, d.nb_nombre,d.tx_callenumero,d.tx_colonia,d.tx_cp,d.tx_ciudadmunicipio,d.tx_estado,d.tx_direccion_formateada,d.st_visible,d.fh_creamod, X(d.tx_gps) as latitude, Y(d.tx_gps) as longitude, e.tx_descripcion 
-				from tsrh_dirmedico as d join tsrh_catespecialidad as e on e.id_catespecialidad = d.tsrh_catespecialidad_id_catespecialidad where e.tx_descripcion = '$especialidad' and (( d.nb_nombre like '%".$proveedor."%') or ( e.tx_descripcion like '%".$proveedor."%')) limit 0,30";
+	$select= "SELECT  esp.tx_descripcion, dir.nb_nombre,dir.tx_callenumero,dir.tx_colonia,dir.tx_estado, X(dir.tx_gps) as latitude, Y(dir.tx_gps) as longitude, esp.tx_descripcion, user.id_region from tsrh_dirmedico dir, tsrh_catespecialidad esp, tsrh_catservicios serv, tsrh_usuario user where dir.tsrh_catespecialidad_id_catespecialidad=esp.id_catespecialidad and dir.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tx_correo='$correoUser' and esp.tx_descripcion = '$especialidad' and ((dir.nb_nombre like '%".$proveedor."%') or (esp.tx_descripcion like '%".$proveedor."%')) limit 0,40";
 	$res = mysqli_query($conexion,$select);
 	mysqli_close($conexion);
 
@@ -523,7 +495,7 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 	    		}
 
 	            echo ''.$row.'<div class="col-md-6">
-						<div class="col-md-12" style="border: 4px solid #CCC;height: 253px;margin-bottom: 10px;padding: 25px;">
+						<div class="col-md-12" style="border: 4px solid #CCC;height: 260px;margin-bottom: 10px;padding: 25px;">
 							<table class="table borderless table-striped">
 								<tbody><tr>
 									<td class="col-md-1"><strong>Nombre</strong></td>
@@ -554,11 +526,7 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 
 	    }
 }elseif ($estado=="Remover Filtro" && $municipio=="Remover Filtro" && $especialidad!="Remover Filtro" && $proveedor=="") {
-	$conexion=mysqli_connect("173.194.254.4","admin","admin")or die ("no se pudo conectar con la base de datos");
-	mysqli_select_db($conexion,"suiterrhhdb") or die("No se encuentra la base de datos solicitada2");
-	mysqli_set_charset($conexion, 'utf8');
-	$select= "SELECT  d.id_dirmedico, d.nb_nombre,d.tx_callenumero,d.tx_colonia,d.tx_cp,d.tx_ciudadmunicipio,d.tx_estado,d.tx_direccion_formateada,d.st_visible,d.fh_creamod, X(d.tx_gps) as latitude, Y(d.tx_gps) as longitude, e.tx_descripcion 
-				from tsrh_dirmedico as d join tsrh_catespecialidad as e on e.id_catespecialidad = d.tsrh_catespecialidad_id_catespecialidad where e.tx_descripcion = '$especialidad'  limit 0,30";
+	$select= "SELECT  esp.tx_descripcion, dir.nb_nombre,dir.tx_callenumero,dir.tx_colonia,dir.tx_estado, X(dir.tx_gps) as latitude, Y(dir.tx_gps) as longitude, esp.tx_descripcion, user.id_region from tsrh_dirmedico dir, tsrh_catespecialidad esp, tsrh_catservicios serv, tsrh_usuario user where dir.tsrh_catespecialidad_id_catespecialidad=esp.id_catespecialidad and dir.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tx_correo='$correoUser' and esp.tx_descripcion = '$especialidad'  limit 0,40";
 	$res = mysqli_query($conexion,$select);
 	mysqli_close($conexion);
 
@@ -583,7 +551,7 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 	    		}
 
 	            echo ''.$row.'<div class="col-md-6">
-						<div class="col-md-12" style="border: 4px solid #CCC;height: 253px;margin-bottom: 10px;padding: 25px;">
+						<div class="col-md-12" style="border: 4px solid #CCC;height: 260px;margin-bottom: 10px;padding: 25px;">
 							<table class="table borderless table-striped">
 								<tbody><tr>
 									<td class="col-md-1"><strong>Nombre</strong></td>
@@ -614,13 +582,10 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 
 	    }
 }else{
-	$conexion=mysqli_connect("173.194.254.4","admin","admin")or die ("no se pudo conectar con la base de datos");
-	mysqli_select_db($conexion,"suiterrhhdb") or die("No se encuentra la base de datos solicitada2");
-	mysqli_set_charset($conexion, 'utf8');
-	$select= "SELECT  d.id_dirmedico, d.nb_nombre,d.tx_callenumero,d.tx_colonia,d.tx_cp,d.tx_ciudadmunicipio,d.tx_estado,d.tx_direccion_formateada,d.st_visible,d.fh_creamod, X(d.tx_gps) as latitude, Y(d.tx_gps) as longitude, e.tx_descripcion 
-				from tsrh_dirmedico as d join tsrh_catespecialidad as e on e.id_catespecialidad = d.tsrh_catespecialidad_id_catespecialidad limit 0,10";
+	$select= "SELECT  esp.tx_descripcion, dir.nb_nombre,dir.tx_callenumero,dir.tx_colonia,dir.tx_estado, X(dir.tx_gps) as latitude, Y(dir.tx_gps) as longitude, esp.tx_descripcion, user.id_region from tsrh_dirmedico dir, tsrh_catespecialidad esp, tsrh_catservicios serv, tsrh_usuario user where dir.tsrh_catespecialidad_id_catespecialidad=esp.id_catespecialidad and dir.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tx_correo='$correoUser' limit 0,40";	
 	$res = mysqli_query($conexion,$select);
 	mysqli_close($conexion);
+
 	if (mysqli_num_rows($res) == 0) { // regreso sin valores
 	  echo '<div class="row" ng-show="nodata">
 	      <div class="col-md-12 text-center">
@@ -631,9 +596,18 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 	    </div>';
 	}else{
 	    
+	    $count=1;
 	    foreach ($res as $response) {
-	            echo '<div class="col-md-6">
-						<div class="col-md-12" style="border: 4px solid #CCC;height: 253px;margin-bottom: 10px;padding: 25px;">
+	    		
+	    		if ($count%2 == 0){
+	    			$row="<div class='row'>";
+	    			$row1="</div>";
+	    		}else{
+	    			$row="";
+	    			$row1="";
+	    		}
+	            echo ''.$row.'<div class="col-md-6">
+						<div class="col-md-12" style="border: 4px solid #CCC;height: 260px;margin-bottom: 10px;padding: 25px;">
 							<table class="table borderless table-striped">
 								<tbody><tr>
 									<td class="col-md-1"><strong>Nombre</strong></td>
@@ -658,12 +632,10 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 								</tbody>
 							</table>
 						</div>
-					</div>';
+					</div>'.$row1.'';
+					$count++;
 	        }
-
-	    }
 }
-
-
+}
 
 ?>

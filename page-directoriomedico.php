@@ -14,8 +14,17 @@
 get_header(); ?>
 
 <?php 
+$profile = new stdClass();
+  $profile->gid = $me["Correo"];
+  $profile->gen = $me["gender"];
+  $profile->nam = $me["displayName"];
+  // $profile->email = $me['emails'][0]['value'];
+  $profile->email="a.aguayo@bbva.com"; 
+  $_SESSION["profile"] = $profile;
+
   $esp= especialidad();
-  $dir= directorioMedico();
+  $dir= directorioMedico($profile->email);
+   
  ?>
  
  <body>
@@ -122,10 +131,19 @@ get_header(); ?>
       </form>
       </div>
       <div class="col-md-10" id="resultado">
-        <?php 
+        <?php
+          if (mysqli_num_rows($dir) == 0) { // regreso sin valores
+              echo '<div class="row" ng-show="nodata">
+                  <div class="col-md-12 text-center">
+                    <button class="btn btn-md btn-warning">
+                      <i class="glyphicon glyphicon-remove"></i> Sin resultados
+                    </button>
+                  </div>
+                </div>';
+            }else{ 
           foreach ($dir as $response) {
             echo '<div class="col-md-6">
-            <div class="col-md-12" style="border: 4px solid #CCC;height: 253px;margin-bottom: 10px;padding:25px;">
+            <div class="col-md-12" style="border: 4px solid #CCC;height: 260px;margin-bottom: 10px;padding:25px;">
               <table class="table borderless table-striped">
                 <tbody><tr>
                   <td class="col-md-1"><strong>Nombre</strong></td>
@@ -152,6 +170,7 @@ get_header(); ?>
             </div>
           </div>';
         }
+      }
          ?>
     </div>
     </div>
@@ -190,7 +209,6 @@ function directorio(frm){
   $especialidad = $("#especialidad option:selected").text();
   $proveedor = frm.proveedor.value;
 
-
   
   $("#resultado").empty();
   $("#resultado").append('<div class="row text-center" ng-show="isActive"><button class="btn btn-lg btn-info"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Filtrando contenido ...</button></div>');
@@ -201,6 +219,7 @@ function directorio(frm){
             estado: $estado,
             municipio: $municipio,
             especialidad: $especialidad,
+            correoUser: "<?php echo $profile->email ?>",
             proveedor: $proveedor
           },
           url: '/pruebas/wp-content/themes/pruebas/directorio.php',
