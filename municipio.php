@@ -3,13 +3,13 @@ $post=(object)$_POST;
 
 $estado = $post->estado;
 
-// $conexion=mysqli_connect("173.194.254.4","admin","admin")or die ("no se pudo conectar con la base de datos");
-// mysqli_select_db($conexion,"suiterrhhdb") or die("No se encuentra la base de datos solicitada2");
-// mysqli_set_charset($conexion, 'utf8');
-
-$conexion=mysqli_connect("localhost","root","root")or die ("no se pudo conectar con la base de datos");
-mysqli_select_db($conexion,"bbva") or die("No se encuentra la base de datos solicitada2");
+$conexion=mysqli_connect("173.194.254.4","admin","admin")or die ("no se pudo conectar con la base de datos");
+mysqli_select_db($conexion,"suiterrhhdb") or die("No se encuentra la base de datos solicitada2");
 mysqli_set_charset($conexion, 'utf8');
+
+// $conexion=mysqli_connect("localhost","root","root")or die ("no se pudo conectar con la base de datos");
+// mysqli_select_db($conexion,"bbva") or die("No se encuentra la base de datos solicitada2");
+// mysqli_set_charset($conexion, 'utf8');
 $select= "SELECT tx_ciudadmunicipio FROM tsrh_dirmedico WHERE tx_estado ='$estado' group by tx_ciudadmunicipio;";
   $res = mysqli_query($conexion,$select);
   mysqli_close($conexion);
