@@ -40,7 +40,6 @@ if($keyword!="" && $categoria!="" && $region!=""){//palabra clave vacia
                   }
       if ($url=="NO APLICA") {$url="";$det="SIN DETALLES";$http="";}else{$det="VER DETALLES";$http='href="http://';}//Valida URL
     $icono=seleccionIcono($response["id_categoria"]);
-    echo $row.$row1;
     echo ''.$row.'<div class="col-md-6">
               <div class="col-md-4" style="padding-right: 0;padding-left: 0;">
                 <div class="col-md-12 ng-scope" ng-if="row.porcentaje">

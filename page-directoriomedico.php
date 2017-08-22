@@ -14,14 +14,14 @@
 get_header(); ?>
 
 <?php 
-$profile = new stdClass();
+  $profile = new stdClass();
   $profile->gid = $me["Correo"];
   $profile->gen = $me["gender"];
   $profile->nam = $me["displayName"];
   // $profile->email = $me['emails'][0]['value'];
-  $profile->email="a.aguayo@bbva.com"; 
+  $profile->email="evazquezb.ids@gmail.com"; 
   $_SESSION["profile"] = $profile;
-
+  //$profile = (object)$_SESSION["profile"];
   $esp= especialidad();
   $dir= directorioMedico($profile->email);
    

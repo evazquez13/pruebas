@@ -18,7 +18,25 @@ mysqli_set_charset($conexion, 'utf8');
 // mysqli_set_charset($conexion, 'utf8');
 
 if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!="Remover Filtro" && $proveedor!="") {
-	$select= "SELECT esp.tx_descripcion, dir.nb_nombre,dir.tx_callenumero,dir.tx_colonia,dir.tx_estado, X(dir.tx_gps) as latitude, Y(dir.tx_gps) as longitude, esp.tx_descripcion, user.id_region from tsrh_dirmedico dir, tsrh_catespecialidad esp, tsrh_catservicios serv, tsrh_usuario user where dir.tsrh_catespecialidad_id_catespecialidad=esp.id_catespecialidad and dir.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tx_correo='$correoUser' and dir.tx_estado = '$estado' and dir.tx_ciudadmunicipio = '$municipio' and esp.tx_descripcion = '$especialidad' and (( dir.nb_nombre like '%".$proveedor."%') or ( esp.tx_descripcion like '%".$proveedor."%'))  limit 0,40";	
+	$select= "SELECT DISTINCT
+	esp.id_catespecialidad,
+	esp.tx_descripcion,
+	dir.nb_nombre,
+    dir.tx_callenumero,
+    dir.tx_colonia,dir.tx_estado, 
+    X(dir.tx_gps) as latitude, 
+    Y(dir.tx_gps) as longitude, 
+    us.id_region
+	FROM
+	tsrh_dirmedico dir, tsrh_usuario us, tsrh_catespecialidad esp
+	where dir.TSRH_CATSERVICIOS_ID_CATSERVICIOS=(select nu_catalogo from tsrh_catservicios where id_catservicios=(select tsrh_catservicios_id_catservicios from tsrh_usuario where tx_correo='$correoUser'))
+	and dir.tsrh_catespecialidad_id_catespecialidad= esp.id_catespecialidad
+	and dir.tx_estado ='$estado'
+	and dir.tx_ciudadmunicipio = '$municipio'
+	and esp.tx_descripcion = '$especialidad'
+	and tx_correo='$correoUser'
+	and (( dir.nb_nombre like '%".$proveedor."%') or ( esp.tx_descripcion like '%".$proveedor."%'))
+	limit 0,40";	
 	$res = mysqli_query($conexion,$select);
 	mysqli_close($conexion);
 
@@ -32,18 +50,8 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 	    </div>';
 	}else{
 	    
-	    $count=1;
 	    foreach ($res as $response) {
-	    		
-	    		if ($count%2 == 0){
-	    			$row="<div class='row'>";
-	    			$row1="</div>";
-	    		}else{
-	    			$row="";
-	    			$row1="";
-	    		}
-
-	            echo ''.$row.'<div class="col-md-6">
+	            echo '<div class="col-md-6">
 						<div class="col-md-12" style="border: 4px solid #CCC;height: 260px;margin-bottom: 10px;padding: 25px;">
 							<table class="table borderless table-striped">
 								<tbody><tr>
@@ -69,13 +77,29 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 								</tbody>
 							</table>
 						</div>
-					</div>'.$row1.'';
-					$count++;
+					</div>';
 	        }
 
 	    }
 }elseif ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!="Remover Filtro" && $proveedor=="") {
-	$select= "SELECT esp.tx_descripcion, dir.nb_nombre,dir.tx_callenumero,dir.tx_colonia,dir.tx_estado, X(dir.tx_gps) as latitude, Y(dir.tx_gps) as longitude, esp.tx_descripcion, user.id_region from tsrh_dirmedico dir, tsrh_catespecialidad esp, tsrh_catservicios serv, tsrh_usuario user where dir.tsrh_catespecialidad_id_catespecialidad=esp.id_catespecialidad and dir.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tx_correo='$correoUser' and dir.tx_estado = '$estado' and dir.tx_ciudadmunicipio = '$municipio' and esp.tx_descripcion = '$especialidad' limit 0,40";
+	$select= "SELECT DISTINCT
+	esp.id_catespecialidad,
+	esp.tx_descripcion,
+	dir.nb_nombre,
+    dir.tx_callenumero,
+    dir.tx_colonia,dir.tx_estado, 
+    X(dir.tx_gps) as latitude, 
+    Y(dir.tx_gps) as longitude, 
+    us.id_region
+	FROM
+	tsrh_dirmedico dir, tsrh_usuario us, tsrh_catespecialidad esp
+	where dir.TSRH_CATSERVICIOS_ID_CATSERVICIOS=(select nu_catalogo from tsrh_catservicios where id_catservicios=(select tsrh_catservicios_id_catservicios from tsrh_usuario where tx_correo='$correoUser'))
+	and dir.tsrh_catespecialidad_id_catespecialidad= esp.id_catespecialidad
+	and dir.tx_estado ='$estado'
+	and dir.tx_ciudadmunicipio = '$municipio'
+	and esp.tx_descripcion = '$especialidad'
+	and tx_correo='$correoUser'
+	limit 0,40";
 	$res = mysqli_query($conexion,$select);
 	mysqli_close($conexion);
 
@@ -89,18 +113,9 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 	    </div>';
 	}else{
 	    
-	    $count=1;
 	    foreach ($res as $response) {
-	    		
-	    		if ($count%2 == 0){
-	    			$row="<div class='row'>";
-	    			$row1="</div>";
-	    		}else{
-	    			$row="";
-	    			$row1="";
-	    		}
 
-	            echo ''.$row.'<div class="col-md-6">
+	            echo '<div class="col-md-6">
 						<div class="col-md-12" style="border: 4px solid #CCC;height: 260px;margin-bottom: 10px;padding: 25px;">
 							<table class="table borderless table-striped">
 								<tbody><tr>
@@ -126,13 +141,29 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 								</tbody>
 							</table>
 						</div>
-					</div>'.$row1.'';
-					$count++;
+					</div>';
 	        }
 
 	    }
 }elseif ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad=="Remover Filtro" && $proveedor!="") {
-	$select= "SELECT esp.tx_descripcion, dir.nb_nombre,dir.tx_callenumero,dir.tx_colonia,dir.tx_estado, X(dir.tx_gps) as latitude, Y(dir.tx_gps) as longitude, esp.tx_descripcion, user.id_region from tsrh_dirmedico dir, tsrh_catespecialidad esp, tsrh_catservicios serv, tsrh_usuario user where dir.tsrh_catespecialidad_id_catespecialidad=esp.id_catespecialidad and dir.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tx_correo='$correoUser' and dir.tx_estado = '$estado' and dir.tx_ciudadmunicipio = '$municipio' and (( dir.nb_nombre like '%".$proveedor."%') or ( esp.tx_descripcion like '%".$proveedor."%')) limit 0,40";
+	$select= "SELECT DISTINCT
+	esp.id_catespecialidad,
+	esp.tx_descripcion,
+	dir.nb_nombre,
+    dir.tx_callenumero,
+    dir.tx_colonia,dir.tx_estado, 
+    X(dir.tx_gps) as latitude, 
+    Y(dir.tx_gps) as longitude, 
+    us.id_region
+	FROM
+	tsrh_dirmedico dir, tsrh_usuario us, tsrh_catespecialidad esp
+	where dir.TSRH_CATSERVICIOS_ID_CATSERVICIOS=(select nu_catalogo from tsrh_catservicios where id_catservicios=(select tsrh_catservicios_id_catservicios from tsrh_usuario where tx_correo='$correoUser'))
+	and dir.tsrh_catespecialidad_id_catespecialidad= esp.id_catespecialidad
+	and dir.tx_estado ='$estado'
+	and dir.tx_ciudadmunicipio = '$municipio'
+	and tx_correo='$correoUser'
+	and (( dir.nb_nombre like '%".$proveedor."%') or ( esp.tx_descripcion like '%".$proveedor."%'))
+	limit 0,40";
 	$res = mysqli_query($conexion,$select);
 	mysqli_close($conexion);
 
@@ -146,18 +177,9 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 	    </div>';
 	}else{
 	    
-	    $count=1;
 	    foreach ($res as $response) {
-	    		
-	    		if ($count%2 == 0){
-	    			$row="<div class='row'>";
-	    			$row1="</div>";
-	    		}else{
-	    			$row="";
-	    			$row1="";
-	    		}
 
-	            echo ''.$row.'<div class="col-md-6">
+	            echo '<div class="col-md-6">
 						<div class="col-md-12" style="border: 4px solid #CCC;height: 260px;margin-bottom: 10px;padding: 25px;">
 							<table class="table borderless table-striped">
 								<tbody><tr>
@@ -183,13 +205,27 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 								</tbody>
 							</table>
 						</div>
-					</div>'.$row1.'';
-					$count++;
+					</div>';
 	        }
 
 	    }
 }elseif ($estado=="Remover Filtro" && $municipio=="Remover Filtro" && $especialidad=="Remover Filtro" && $proveedor!="") {
-	$select= "SELECT esp.tx_descripcion, dir.nb_nombre,dir.tx_callenumero,dir.tx_colonia,dir.tx_estado, X(dir.tx_gps) as latitude, Y(dir.tx_gps) as longitude, esp.tx_descripcion, user.id_region from tsrh_dirmedico dir, tsrh_catespecialidad esp, tsrh_catservicios serv, tsrh_usuario user where dir.tsrh_catespecialidad_id_catespecialidad=esp.id_catespecialidad and dir.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tx_correo='$correoUser' and ((dir.nb_nombre like '%".$proveedor."%') or (esp.tx_descripcion like '%".$proveedor."%')) limit 0,40";
+	$select= "SELECT DISTINCT
+	esp.id_catespecialidad,
+	esp.tx_descripcion,
+	dir.nb_nombre,
+    dir.tx_callenumero,
+    dir.tx_colonia,dir.tx_estado, 
+    X(dir.tx_gps) as latitude, 
+    Y(dir.tx_gps) as longitude, 
+    us.id_region
+	FROM
+	tsrh_dirmedico dir, tsrh_usuario us, tsrh_catespecialidad esp
+	where dir.TSRH_CATSERVICIOS_ID_CATSERVICIOS=(select nu_catalogo from tsrh_catservicios where id_catservicios=(select tsrh_catservicios_id_catservicios from tsrh_usuario where tx_correo='$correoUser'))
+	and dir.tsrh_catespecialidad_id_catespecialidad= esp.id_catespecialidad
+	and tx_correo='$correoUser'
+	and (( dir.nb_nombre like '%".$proveedor."%') or ( esp.tx_descripcion like '%".$proveedor."%'))
+	limit 0,40";
 	$res = mysqli_query($conexion,$select);
 	mysqli_close($conexion);
 
@@ -203,18 +239,9 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 	    </div>';
 	}else{
 	    
-	    $count=1;
 	    foreach ($res as $response) {
-	    		
-	    		if ($count%2 == 0){
-	    			$row="<div class='row'>";
-	    			$row1="</div>";
-	    		}else{
-	    			$row="";
-	    			$row1="";
-	    		}
 
-	            echo ''.$row.'<div class="col-md-6">
+	            echo '<div class="col-md-6">
 						<div class="col-md-12" style="border: 4px solid #CCC;height: 260px;margin-bottom: 10px;padding: 25px;">
 							<table class="table borderless table-striped">
 								<tbody><tr>
@@ -240,13 +267,28 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 								</tbody>
 							</table>
 						</div>
-					</div>'.$row1.'';
-					$count++;
+					</div>';
 	        }
 
 	    }
 }elseif ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad=="Remover Filtro" && $proveedor=="") {
-	$select= "SELECT esp.tx_descripcion, dir.nb_nombre,dir.tx_callenumero,dir.tx_colonia,dir.tx_estado, X(dir.tx_gps) as latitude, Y(dir.tx_gps) as longitude, esp.tx_descripcion, user.id_region from tsrh_dirmedico dir, tsrh_catespecialidad esp, tsrh_catservicios serv, tsrh_usuario user where dir.tsrh_catespecialidad_id_catespecialidad=esp.id_catespecialidad and dir.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tx_correo='$correoUser' and dir.tx_estado = '$estado' and dir.tx_ciudadmunicipio = '$municipio'  limit 0,40";
+	$select= "SELECT DISTINCT
+	esp.id_catespecialidad,
+	esp.tx_descripcion,
+	dir.nb_nombre,
+    dir.tx_callenumero,
+    dir.tx_colonia,dir.tx_estado, 
+    X(dir.tx_gps) as latitude, 
+    Y(dir.tx_gps) as longitude, 
+    us.id_region
+	FROM
+	tsrh_dirmedico dir, tsrh_usuario us, tsrh_catespecialidad esp
+	where dir.TSRH_CATSERVICIOS_ID_CATSERVICIOS=(select nu_catalogo from tsrh_catservicios where id_catservicios=(select tsrh_catservicios_id_catservicios from tsrh_usuario where tx_correo='$correoUser'))
+	and dir.tsrh_catespecialidad_id_catespecialidad= esp.id_catespecialidad
+	and dir.tx_estado ='$estado'
+	and dir.tx_ciudadmunicipio = '$municipio'
+	and tx_correo='$correoUser'
+	limit 0,40";
 	$res = mysqli_query($conexion,$select);
 	mysqli_close($conexion);
 
@@ -259,18 +301,9 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 	      </div>
 	    </div>';
 	}else{
-	    $count=1;
 	    foreach ($res as $response) {
-	    		
-	    		if ($count%2 == 0){
-	    			$row="<div class='row'>";
-	    			$row1="</div>";
-	    		}else{
-	    			$row="";
-	    			$row1="";
-	    		}
 
-	            echo ''.$row.'<div class="col-md-6">
+	            echo '<div class="col-md-6">
 						<div class="col-md-12" style="border: 4px solid #CCC;height: 260px;margin-bottom: 10px;padding: 25px;">
 							<table class="table borderless table-striped">
 								<tbody><tr>
@@ -296,13 +329,27 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 								</tbody>
 							</table>
 						</div>
-					</div>'.$row1.'';
-					$count++;
+					</div>';
 	        }
 
 	    }
 }elseif ($estado!="Remover Filtro" && $municipio=="Remover Filtro" && $especialidad=="Remover Filtro" && $proveedor=="") {
-	$select= "SELECT esp.tx_descripcion, dir.nb_nombre,dir.tx_callenumero,dir.tx_colonia,dir.tx_estado, X(dir.tx_gps) as latitude, Y(dir.tx_gps) as longitude, esp.tx_descripcion, user.id_region from tsrh_dirmedico dir, tsrh_catespecialidad esp, tsrh_catservicios serv, tsrh_usuario user where dir.tsrh_catespecialidad_id_catespecialidad=esp.id_catespecialidad and dir.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tx_correo='$correoUser' and dir.tx_estado = '$estado'  limit 0,40";
+	$select= "SELECT DISTINCT
+	esp.id_catespecialidad,
+	esp.tx_descripcion,
+	dir.nb_nombre,
+    dir.tx_callenumero,
+    dir.tx_colonia,dir.tx_estado, 
+    X(dir.tx_gps) as latitude, 
+    Y(dir.tx_gps) as longitude, 
+    us.id_region
+	FROM
+	tsrh_dirmedico dir, tsrh_usuario us, tsrh_catespecialidad esp
+	where dir.TSRH_CATSERVICIOS_ID_CATSERVICIOS=(select nu_catalogo from tsrh_catservicios where id_catservicios=(select tsrh_catservicios_id_catservicios from tsrh_usuario where tx_correo='$correoUser'))
+	and dir.tsrh_catespecialidad_id_catespecialidad= esp.id_catespecialidad
+	and dir.tx_estado ='$estado'
+	and tx_correo='$correoUser'
+	limit 0,40";
 	$res = mysqli_query($conexion,$select);
 	mysqli_close($conexion);
 
@@ -315,18 +362,9 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 	      </div>
 	    </div>';
 	}else{
-	    $count=1;
 	    foreach ($res as $response) {
-	    		
-	    		if ($count%2 == 0){
-	    			$row="<div class='row'>";
-	    			$row1="</div>";
-	    		}else{
-	    			$row="";
-	    			$row1="";
-	    		}
 
-	            echo ''.$row.'<div class="col-md-6">
+	            echo '<div class="col-md-6">
 						<div class="col-md-12" style="border: 4px solid #CCC;height: 260px;margin-bottom: 10px;padding: 25px;">
 							<table class="table borderless table-striped">
 								<tbody><tr>
@@ -352,13 +390,28 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 								</tbody>
 							</table>
 						</div>
-					</div>'.$row1.'';
-					$count++;
+					</div>';
 	        }
 
 	    }
 }elseif ($estado!="Remover Filtro" && $municipio=="Remover Filtro" && $especialidad!="Remover Filtro" && $proveedor=="") {
-	$select= "SELECT esp.tx_descripcion, dir.nb_nombre,dir.tx_callenumero,dir.tx_colonia,dir.tx_estado, X(dir.tx_gps) as latitude, Y(dir.tx_gps) as longitude, esp.tx_descripcion, user.id_region from tsrh_dirmedico dir, tsrh_catespecialidad esp, tsrh_catservicios serv, tsrh_usuario user where dir.tsrh_catespecialidad_id_catespecialidad=esp.id_catespecialidad and dir.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tx_correo='$correoUser' and dir.tx_estado = '$estado' and esp.tx_descripcion = '$especialidad' limit 0,40";
+	$select= "SELECT DISTINCT
+	esp.id_catespecialidad,
+	esp.tx_descripcion,
+	dir.nb_nombre,
+    dir.tx_callenumero,
+    dir.tx_colonia,dir.tx_estado, 
+    X(dir.tx_gps) as latitude, 
+    Y(dir.tx_gps) as longitude, 
+    us.id_region
+	FROM
+	tsrh_dirmedico dir, tsrh_usuario us, tsrh_catespecialidad esp
+	where dir.TSRH_CATSERVICIOS_ID_CATSERVICIOS=(select nu_catalogo from tsrh_catservicios where id_catservicios=(select tsrh_catservicios_id_catservicios from tsrh_usuario where tx_correo='$correoUser'))
+	and dir.tsrh_catespecialidad_id_catespecialidad= esp.id_catespecialidad
+	and dir.tx_estado ='$estado'
+	and esp.tx_descripcion = '$especialidad'
+	and tx_correo='$correoUser'
+	limit 0,40";
 	$res = mysqli_query($conexion,$select);
 	mysqli_close($conexion);
 
@@ -371,18 +424,9 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 	      </div>
 	    </div>';
 	}else{
-	    $count=1;
 	    foreach ($res as $response) {
-	    		
-	    		if ($count%2 == 0){
-	    			$row="<div class='row'>";
-	    			$row1="</div>";
-	    		}else{
-	    			$row="";
-	    			$row1="";
-	    		}
 
-	            echo ''.$row.'<div class="col-md-6">
+	            echo '<div class="col-md-6">
 						<div class="col-md-12" style="border: 4px solid #CCC;height: 260px;margin-bottom: 10px;padding: 25px;">
 							<table class="table borderless table-striped">
 								<tbody><tr>
@@ -408,13 +452,28 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 								</tbody>
 							</table>
 						</div>
-					</div>'.$row1.'';
-					$count++;
+					</div>';
 	        }
 
 	    }
 }elseif ($estado!="Remover Filtro" && $municipio=="Remover Filtro" && $especialidad=="Remover Filtro" && $proveedor!="") {
-	$select= "SELECT esp.tx_descripcion, dir.nb_nombre,dir.tx_callenumero,dir.tx_colonia,dir.tx_estado, X(dir.tx_gps) as latitude, Y(dir.tx_gps) as longitude, esp.tx_descripcion, user.id_region from tsrh_dirmedico dir, tsrh_catespecialidad esp, tsrh_catservicios serv, tsrh_usuario user where dir.tsrh_catespecialidad_id_catespecialidad=esp.id_catespecialidad and dir.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tx_correo='$correoUser' and dir.tx_estado = '$estado' and (( dir.nb_nombre like '%".$proveedor."%') or ( esp.tx_descripcion like '%".$proveedor."%')) limit 0,40";
+	$select= "SELECT DISTINCT
+	esp.id_catespecialidad,
+	esp.tx_descripcion,
+	dir.nb_nombre,
+    dir.tx_callenumero,
+    dir.tx_colonia,dir.tx_estado, 
+    X(dir.tx_gps) as latitude, 
+    Y(dir.tx_gps) as longitude, 
+    us.id_region
+	FROM
+	tsrh_dirmedico dir, tsrh_usuario us, tsrh_catespecialidad esp
+	where dir.TSRH_CATSERVICIOS_ID_CATSERVICIOS=(select nu_catalogo from tsrh_catservicios where id_catservicios=(select tsrh_catservicios_id_catservicios from tsrh_usuario where tx_correo='$correoUser'))
+	and dir.tsrh_catespecialidad_id_catespecialidad= esp.id_catespecialidad
+	and dir.tx_estado ='$estado'
+	and tx_correo='$correoUser'
+	and (( dir.nb_nombre like '%".$proveedor."%') or ( esp.tx_descripcion like '%".$proveedor."%'))
+	limit 0,40";
 	$res = mysqli_query($conexion,$select);
 	mysqli_close($conexion);
 
@@ -427,18 +486,9 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 	      </div>
 	    </div>';
 	}else{
-	    $count=1;
 	    foreach ($res as $response) {
-	    		
-	    		if ($count%2 == 0){
-	    			$row="<div class='row'>";
-	    			$row1="</div>";
-	    		}else{
-	    			$row="";
-	    			$row1="";
-	    		}
 
-	            echo ''.$row.'<div class="col-md-6">
+	            echo '<div class="col-md-6">
 						<div class="col-md-12" style="border: 4px solid #CCC;height: 260px;margin-bottom: 10px;padding: 25px;">
 							<table class="table borderless table-striped">
 								<tbody><tr>
@@ -464,13 +514,28 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 								</tbody>
 							</table>
 						</div>
-					</div>'.$row1.'';
-					$count++;
+					</div>';
 	        }
 
 	    }
 }elseif ($estado=="Remover Filtro" && $municipio=="Remover Filtro" && $especialidad!="Remover Filtro" && $proveedor!="") {
-	$select= "SELECT  esp.tx_descripcion, dir.nb_nombre,dir.tx_callenumero,dir.tx_colonia,dir.tx_estado, X(dir.tx_gps) as latitude, Y(dir.tx_gps) as longitude, esp.tx_descripcion, user.id_region from tsrh_dirmedico dir, tsrh_catespecialidad esp, tsrh_catservicios serv, tsrh_usuario user where dir.tsrh_catespecialidad_id_catespecialidad=esp.id_catespecialidad and dir.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tx_correo='$correoUser' and esp.tx_descripcion = '$especialidad' and ((dir.nb_nombre like '%".$proveedor."%') or (esp.tx_descripcion like '%".$proveedor."%')) limit 0,40";
+	$select= "SELECT DISTINCT
+	esp.id_catespecialidad,
+	esp.tx_descripcion,
+	dir.nb_nombre,
+    dir.tx_callenumero,
+    dir.tx_colonia,dir.tx_estado, 
+    X(dir.tx_gps) as latitude, 
+    Y(dir.tx_gps) as longitude, 
+    us.id_region
+	FROM
+	tsrh_dirmedico dir, tsrh_usuario us, tsrh_catespecialidad esp
+	where dir.TSRH_CATSERVICIOS_ID_CATSERVICIOS=(select nu_catalogo from tsrh_catservicios where id_catservicios=(select tsrh_catservicios_id_catservicios from tsrh_usuario where tx_correo='$correoUser'))
+	and dir.tsrh_catespecialidad_id_catespecialidad= esp.id_catespecialidad
+	and esp.tx_descripcion = '$especialidad'
+	and tx_correo='$correoUser'
+	and (( dir.nb_nombre like '%".$proveedor."%') or ( esp.tx_descripcion like '%".$proveedor."%'))
+	limit 0,40";
 	$res = mysqli_query($conexion,$select);
 	mysqli_close($conexion);
 
@@ -483,18 +548,9 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 	      </div>
 	    </div>';
 	}else{
-	    $count=1;
 	    foreach ($res as $response) {
-	    		
-	    		if ($count%2 == 0){
-	    			$row="<div class='row'>";
-	    			$row1="</div>";
-	    		}else{
-	    			$row="";
-	    			$row1="";
-	    		}
 
-	            echo ''.$row.'<div class="col-md-6">
+	            echo '<div class="col-md-6">
 						<div class="col-md-12" style="border: 4px solid #CCC;height: 260px;margin-bottom: 10px;padding: 25px;">
 							<table class="table borderless table-striped">
 								<tbody><tr>
@@ -520,13 +576,27 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 								</tbody>
 							</table>
 						</div>
-					</div>'.$row1.'';
-					$count++;
+					</div>';
 	        }
 
 	    }
 }elseif ($estado=="Remover Filtro" && $municipio=="Remover Filtro" && $especialidad!="Remover Filtro" && $proveedor=="") {
-	$select= "SELECT  esp.tx_descripcion, dir.nb_nombre,dir.tx_callenumero,dir.tx_colonia,dir.tx_estado, X(dir.tx_gps) as latitude, Y(dir.tx_gps) as longitude, esp.tx_descripcion, user.id_region from tsrh_dirmedico dir, tsrh_catespecialidad esp, tsrh_catservicios serv, tsrh_usuario user where dir.tsrh_catespecialidad_id_catespecialidad=esp.id_catespecialidad and dir.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tx_correo='$correoUser' and esp.tx_descripcion = '$especialidad'  limit 0,40";
+	$select= "SELECT DISTINCT
+	esp.id_catespecialidad,
+	esp.tx_descripcion,
+	dir.nb_nombre,
+    dir.tx_callenumero,
+    dir.tx_colonia,dir.tx_estado, 
+    X(dir.tx_gps) as latitude, 
+    Y(dir.tx_gps) as longitude, 
+    us.id_region
+	FROM
+	tsrh_dirmedico dir, tsrh_usuario us, tsrh_catespecialidad esp
+	where dir.TSRH_CATSERVICIOS_ID_CATSERVICIOS=(select nu_catalogo from tsrh_catservicios where id_catservicios=(select tsrh_catservicios_id_catservicios from tsrh_usuario where tx_correo='$correoUser'))
+	and dir.tsrh_catespecialidad_id_catespecialidad= esp.id_catespecialidad
+	and esp.tx_descripcion = '$especialidad'
+	and tx_correo='$correoUser'
+	limit 0,40";
 	$res = mysqli_query($conexion,$select);
 	mysqli_close($conexion);
 
@@ -539,18 +609,9 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 	      </div>
 	    </div>';
 	}else{
-	    $count=1;
 	    foreach ($res as $response) {
-	    		
-	    		if ($count%2 == 0){
-	    			$row="<div class='row'>";
-	    			$row1="</div>";
-	    		}else{
-	    			$row="";
-	    			$row1="";
-	    		}
 
-	            echo ''.$row.'<div class="col-md-6">
+	            echo '<div class="col-md-6">
 						<div class="col-md-12" style="border: 4px solid #CCC;height: 260px;margin-bottom: 10px;padding: 25px;">
 							<table class="table borderless table-striped">
 								<tbody><tr>
@@ -576,13 +637,25 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 								</tbody>
 							</table>
 						</div>
-					</div>'.$row1.'';
-					$count++;
+					</div>';
 	        }
 
 	    }
 }else{
-	$select= "SELECT  esp.tx_descripcion, dir.nb_nombre,dir.tx_callenumero,dir.tx_colonia,dir.tx_estado, X(dir.tx_gps) as latitude, Y(dir.tx_gps) as longitude, esp.tx_descripcion, user.id_region from tsrh_dirmedico dir, tsrh_catespecialidad esp, tsrh_catservicios serv, tsrh_usuario user where dir.tsrh_catespecialidad_id_catespecialidad=esp.id_catespecialidad and dir.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tx_correo='$correoUser' limit 0,40";	
+	$select= "SELECT DISTINCT
+	esp.id_catespecialidad,
+	esp.tx_descripcion,
+	dir.nb_nombre,
+    dir.tx_callenumero,
+    dir.tx_colonia,dir.tx_estado, 
+    X(dir.tx_gps) as latitude, 
+    Y(dir.tx_gps) as longitude, 
+    us.id_region
+	FROM
+	tsrh_dirmedico dir, tsrh_usuario us, tsrh_catespecialidad esp
+	where dir.TSRH_CATSERVICIOS_ID_CATSERVICIOS=(select nu_catalogo from tsrh_catservicios where id_catservicios=(select tsrh_catservicios_id_catservicios from tsrh_usuario where tx_correo='$correoUser'))
+	and dir.tsrh_catespecialidad_id_catespecialidad= esp.id_catespecialidad
+	and tx_correo='$correoUser' limit 0,40";	
 	$res = mysqli_query($conexion,$select);
 	mysqli_close($conexion);
 
@@ -596,17 +669,8 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 	    </div>';
 	}else{
 	    
-	    $count=1;
 	    foreach ($res as $response) {
-	    		
-	    		if ($count%2 == 0){
-	    			$row="<div class='row'>";
-	    			$row1="</div>";
-	    		}else{
-	    			$row="";
-	    			$row1="";
-	    		}
-	            echo ''.$row.'<div class="col-md-6">
+	            echo '<div class="col-md-6">
 						<div class="col-md-12" style="border: 4px solid #CCC;height: 260px;margin-bottom: 10px;padding: 25px;">
 							<table class="table borderless table-striped">
 								<tbody><tr>
@@ -632,8 +696,7 @@ if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!=
 								</tbody>
 							</table>
 						</div>
-					</div>'.$row1.'';
-					$count++;
+					</div>';
 	        }
 }
 }

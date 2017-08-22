@@ -478,7 +478,21 @@ function especialidad(){
 
 function directorioMedico($email){
 	$conexion=dboCon();
-	$select= "SELECT  esp.tx_descripcion, dir.nb_nombre,dir.tx_callenumero,dir.tx_colonia,dir.tx_estado, X(dir.tx_gps) as latitude, Y(dir.tx_gps) as longitude, esp.tx_descripcion, user.id_region from tsrh_dirmedico dir, tsrh_catespecialidad esp, tsrh_catservicios serv, tsrh_usuario user where dir.tsrh_catespecialidad_id_catespecialidad=esp.id_catespecialidad and dir.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tsrh_catservicios_id_catservicios=serv.id_catservicios and user.tx_correo='$email' limit 0,40";
+	$select= "SELECT DISTINCT
+	esp.id_catespecialidad,
+	esp.tx_descripcion,
+	dir.nb_nombre,
+    dir.tx_callenumero,
+    dir.tx_colonia,dir.tx_estado, 
+    X(dir.tx_gps) as latitude, 
+    Y(dir.tx_gps) as longitude, 
+    us.id_region
+	FROM
+	tsrh_dirmedico dir, tsrh_usuario us, tsrh_catespecialidad esp
+	where dir.TSRH_CATSERVICIOS_ID_CATSERVICIOS=(select nu_catalogo from tsrh_catservicios where id_catservicios=(select tsrh_catservicios_id_catservicios from tsrh_usuario where tx_correo='$email'))
+	and dir.tsrh_catespecialidad_id_catespecialidad= esp.id_catespecialidad
+	and tx_correo='$email'
+	limit 0,40";
 	$res = mysqli_query($conexion,$select);
 	mysqli_close($conexion);
 	return $res;
