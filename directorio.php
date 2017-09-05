@@ -9,13 +9,13 @@ $correoUser =$post->correoUser;
 
 $proveedor=str_replace(' ','%',$prov);
 
-$conexion=mysqli_connect("173.194.254.4","admin","admin")or die ("no se pudo conectar con la base de datos");
-mysqli_select_db($conexion,"suiterrhhdb") or die("No se encuentra la base de datos solicitada2");
-mysqli_set_charset($conexion, 'utf8');
-
-// $conexion=mysqli_connect("localhost","root","root")or die ("no se pudo conectar con la base de datos");
-// mysqli_select_db($conexion,"bbva") or die("No se encuentra la base de datos solicitada2");
+// $conexion=mysqli_connect("173.194.254.4","admin","admin")or die ("no se pudo conectar con la base de datos");
+// mysqli_select_db($conexion,"suiterrhhdb") or die("No se encuentra la base de datos solicitada2");
 // mysqli_set_charset($conexion, 'utf8');
+
+$conexion=mysqli_connect("localhost","root","root")or die ("no se pudo conectar con la base de datos");
+mysqli_select_db($conexion,"bbva") or die("No se encuentra la base de datos solicitada2");
+mysqli_set_charset($conexion, 'utf8');
 
 if ($estado!="Remover Filtro" && $municipio!="Remover Filtro" && $especialidad!="Remover Filtro" && $proveedor!="") {
 	$select= "SELECT DISTINCT

@@ -53,6 +53,8 @@ if ( ! function_exists( 'twentyfifteen_setup' ) ) :
  *
  * @since Twenty Fifteen 1.0
  */
+
+ipAdress();
 createtable();
 function twentyfifteen_setup() {
 
@@ -432,15 +434,15 @@ function createtable(){
 }
 function dboCon(){
 
- // $host="localhost";
- // $user="root";
- // $pass="root";
- // $dbo="bbva";
+ $host="localhost";
+ $user="root";
+ $pass="root";
+ $dbo="bbva";
 
- $host="173.194.254.4";
- $user="admin";
- $pass="admin";
- $dbo="suiterrhhdb";
+ // $host="173.194.254.4";
+ // $user="admin";
+ // $pass="admin";
+ // $dbo="suiterrhhdb";
 
  $conexion=mysqli_connect($host,$user,$pass)or die ("no se pudo conectar con la base de datos");
   mysqli_select_db($conexion,$dbo) or die("No se encuentra la base de datos solicitada1");
@@ -489,11 +491,26 @@ function directorioMedico($email){
     us.id_region
 	FROM
 	tsrh_dirmedico dir, tsrh_usuario us, tsrh_catespecialidad esp
-	where dir.TSRH_CATSERVICIOS_ID_CATSERVICIOS=(select nu_catalogo from tsrh_catservicios where id_catservicios=(select tsrh_catservicios_id_catservicios from tsrh_usuario where tx_correo='$email'))
-	and dir.tsrh_catespecialidad_id_catespecialidad= esp.id_catespecialidad
-	and tx_correo='$email'
 	limit 0,40";
 	$res = mysqli_query($conexion,$select);
 	mysqli_close($conexion);
 	return $res;
+}
+function ipAdress(){
+
+	$ipaddress = '148.244.42.177';
+    $ipaddress = $_SERVER['REMOTE_ADDR'];
+
+    $ip_cliente = ip2long($ipaddress);
+
+    $ip_qvd_low=ip2long("148.244.42.177");
+    $ip_qvd_top=ip2long("148.244.42.178");
+
+    if(($ip_cliente <= $ip_qvd_top && $ip_qvd_low <= $ip_cliente)){ // Valida rango omitidos por default
+    	return 1;
+	}
+    else{ //todos las demas IP
+    	return 0;
+    }
+
 }

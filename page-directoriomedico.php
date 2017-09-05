@@ -19,11 +19,11 @@ get_header(); ?>
   $profile->gen = $me["gender"];
   $profile->nam = $me["displayName"];
   // $profile->email = $me['emails'][0]['value'];
-  $profile->email="evazquezb.ids@gmail.com"; 
+  $profile->email="emmanuel.vazquez.bravo.contractor@bbva.com"; 
   $_SESSION["profile"] = $profile;
   //$profile = (object)$_SESSION["profile"];
   $esp= especialidad();
-  $dir= directorioMedico($profile->email);
+  $dir= directorioMedico();
    
  ?>
  
